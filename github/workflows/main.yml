@@ -1,1 +1,22 @@
-x
+name: Build ReNor
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build ReNor
+        env:
+          KEY_B64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          KEY_PASS: ${{ secrets.RELEASE_PASSWORD }}
+        run: |
+          for f in *.zip; do unzip -o "$f"; done
+          bash renor-android/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ReNor-app
+          path: out/
